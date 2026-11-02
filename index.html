@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090d1b">
+<title>CANDY IS LIVE</title>
+<style>
+  :root { --accent:#ff3b55; --accent2:#ff7a45; --glow:rgba(255,59,85,.32); }
+  * { box-sizing:border-box; }
+  body {
+    margin:0; min-height:100vh; display:grid; place-items:center; padding:22px;
+    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; color:#f8fbff;
+    background:
+      radial-gradient(ellipse at 15% 20%, color-mix(in srgb, var(--accent) 25%, transparent), transparent 38%),
+      radial-gradient(ellipse at 85% 80%, color-mix(in srgb, var(--accent2) 17%, transparent), transparent 40%),
+      linear-gradient(145deg,#070a14,#101a33 55%,#080d1b);
+    background-size:140% 140%; animation:bgShift 12s ease-in-out infinite alternate;
+    transition:background 1s ease;
+  }
+  @keyframes bgShift { from {background-position:0% 0%;} to {background-position:100% 100%;} }
+  .card {
+    width:min(100%,420px); position:relative; overflow:hidden; padding:34px 25px 26px;
+    text-align:center; border:1px solid color-mix(in srgb,var(--accent) 45%,#ffffff22);
+    border-radius:28px; background:linear-gradient(155deg,rgba(255,255,255,.10),rgba(255,255,255,.035));
+    box-shadow:0 22px 75px #0008,0 0 38px var(--glow),inset 0 1px 0 #ffffff20;
+    backdrop-filter:blur(18px); transition:border-color 1s,box-shadow 1s;
+  }
+  .card:before { content:"";position:absolute;inset:-2px auto auto -30%;width:160%;height:2px;
+    background:linear-gradient(90deg,transparent,var(--accent),var(--accent2),transparent);filter:drop-shadow(0 0 9px var(--accent));animation:scan 5s linear infinite; }
+  @keyframes scan { from{transform:translateX(-35%)} to{transform:translateX(35%)} }
+  .logo {
+    width:88px;height:88px;margin:0 auto 18px;border-radius:26px;display:grid;place-items:center;
+    font-size:43px;background:linear-gradient(140deg,color-mix(in srgb,var(--accent) 75%,#fff),#111b34 78%);
+    border:1px solid color-mix(in srgb,var(--accent) 65%,#fff);box-shadow:0 0 28px var(--glow);
+    transition:background 1s,border-color 1s;
+  }
+  .online { display:inline-block;width:8px;height:8px;border-radius:50%;background:#36e78b;box-shadow:0 0 12px #36e78b;margin-right:7px; }
+  .eyebrow { color:#cbd5e8;font-size:11px;letter-spacing:3px;text-transform:uppercase;font-weight:800; }
+  h1 { font-size:clamp(27px,7vw,35px);letter-spacing:1.3px;margin:12px 0 8px;font-weight:900; }
+  .titleGlow { color:#fff;text-shadow:0 0 18px var(--glow);transition:text-shadow 1s; }
+  .sub { color:#bac5d9;font-size:14px;margin:0 0 26px; }
+  .member-panel {
+    margin:0 0 18px;padding:16px 14px 14px;border-radius:18px;
+    background:linear-gradient(135deg,rgba(18,155,87,.17),rgba(7,20,26,.72));
+    border:1px solid rgba(47,233,133,.48);
+    box-shadow:0 0 24px rgba(39,220,125,.10),inset 0 0 18px rgba(39,220,125,.04);
+  }
+  .member-live { display:flex;align-items:center;justify-content:center;gap:8px;color:#8df7b7;font-size:10px;font-weight:900;letter-spacing:1.5px; }
+  .member-pulse { width:7px;height:7px;border-radius:50%;background:#2fe985;box-shadow:0 0 10px #2fe985;animation:pulseGreen 1.5s ease-in-out infinite; }
+  .member-count { margin-top:8px;color:#e8fff0;font-size:30px;line-height:1.15;font-weight:900;letter-spacing:1px;text-shadow:0 0 18px rgba(47,233,133,.28); }
+  .member-caption { margin-top:3px;color:#8df7b7;font-size:12px;font-weight:750; }
+  .member-note { margin-top:9px;color:#9aaeb0;font-size:10px;line-height:1.4; }
+  @keyframes pulseGreen { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(.78);opacity:.65} }
+  .verify { display:flex;align-items:center;gap:12px;text-align:left;padding:15px 14px;border-radius:15px;
+    background:#070b16aa;border:1px solid #ffffff20;margin:0 0 15px;cursor:pointer;user-select:none; }
+  .verify input { appearance:none;flex:0 0 23px;width:23px;height:23px;margin:0;border:2px solid #7e8ba4;border-radius:6px;background:#0b1222;display:grid;place-content:center;cursor:pointer; }
+  .verify input:checked { background:var(--accent);border-color:var(--accent);box-shadow:0 0 13px var(--glow); }
+  .verify input:checked:after { content:"✓";font-size:17px;font-weight:900;color:white;line-height:1; }
+  .verify strong { display:block;font-size:14px; }
+  .verify small { display:block;color:#9aa8c0;font-size:11px;margin-top:3px; }
+  .join { display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:56px;border-radius:15px;
+    border:1px solid color-mix(in srgb,var(--accent) 75%,#fff);font-size:14px;font-weight:900;letter-spacing:1.1px;
+    color:#fff;text-decoration:none;background:linear-gradient(100deg,var(--accent),var(--accent2));box-shadow:0 8px 25px var(--glow);
+    transition:opacity .25s,filter .25s,transform .25s,background 1s,box-shadow 1s; }
+  .join.locked { opacity:.38;filter:grayscale(.55);pointer-events:none;box-shadow:none; }
+  .join:not(.locked):hover { transform:translateY(-2px);filter:brightness(1.1); }
+  .hint { min-height:17px;margin:12px 0 0;color:#aebbd0;font-size:11px; }
+  .footer { border-top:1px solid #ffffff17;margin-top:23px;padding-top:17px;color:#8795ad;font-size:11px; }
+  .footer b { color:#cbd6e8;font-weight:650; }
+  .palette { display:flex;justify-content:center;gap:7px;margin:15px 0 0; }
+  .dot { width:8px;height:8px;border-radius:50%;background:var(--c);box-shadow:0 0 10px var(--c);opacity:.4; }
+  .dot.active { opacity:1;transform:scale(1.25); }
+  @media (prefers-reduced-motion:reduce) { *,*:before {animation:none!important;transition:none!important;} }
+</style>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1128190946526418');
+fbq('init', '1467651918616149');
+fbq('track', 'PageView');
+</script>
+<noscript>
+<img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1128190946526418&ev=PageView&noscript=1"
+/>
+<img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1467651918616149&ev=PageView&noscript=1"
+/>
+</noscript>
+<!-- End Meta Pixel Code -->
+
+</head>
+<body>
+<main class="card">
+  <div class="logo" aria-hidden="true">👑</div>
+  <div class="eyebrow"><span class="online"></span>Official Community</div>
+  <h1 class="titleGlow">CANDY IS LIVE</h1>
+  <p class="sub">Join the community on Telegram</p>
+
+  <section class="member-panel" aria-label="Live member join tracking">
+    <div class="member-live"><span class="member-pulse"></span> LIVE MEMBER ACTIVITY</div>
+    <div class="member-count" id="memberCount">10,190</div>
+    <div class="member-caption">verified joins</div>
+    <div class="member-note">Current channel count reported: 10,190. This number will not update automatically until verified tracking is connected.</div>
+  </section>
+
+  <label class="verify" for="robotCheck">
+    <input id="robotCheck" type="checkbox" aria-label="Unlock Join Channel button">
+    <span><strong>I'm not a robot</strong><small>Tick the box to unlock the channel button</small></span>
+  </label>
+
+  <a class="join locked" id="joinBtn" href="https://t.me/+rNPglvGsx605N2E1" aria-disabled="true" tabindex="-1">
+    <span>✈</span><span>JOIN CHANNEL</span><span aria-hidden="true">→</span>
+  </a>
+  <p class="hint" id="hint" aria-live="polite">Tick the box above to unlock JOIN CHANNEL.</p>
+  <div class="palette" aria-hidden="true">
+    <span class="dot active" style="--c:#ff3b55"></span>
+    <span class="dot" style="--c:#27df85"></span>
+    <span class="dot" style="--c:#27a8ff"></span>
+    <span class="dot" style="--c:#b66bff"></span>
+  </div>
+  <div class="footer">🔒 <b>Official community link</b><br>Secure link • Opens Telegram</div>
+</main>
+<script>
+  const colors = [
+    {a:'#ff3b55', b:'#ff7a45', glow:'rgba(255,59,85,.32)'},   // red
+    {a:'#20d978', b:'#8de34f', glow:'rgba(32,217,120,.30)'},  // green
+    {a:'#258bff', b:'#27e0e7', glow:'rgba(37,139,255,.32)'},  // blue
+    {a:'#a855f7', b:'#f05bb5', glow:'rgba(168,85,247,.32)'}   // purple/pink
+  ];
+  let colorIndex = 0;
+  const dots = [...document.querySelectorAll('.dot')];
+  function setColors(index) {
+    const c = colors[index];
+    document.documentElement.style.setProperty('--accent', c.a);
+    document.documentElement.style.setProperty('--accent2', c.b);
+    document.documentElement.style.setProperty('--glow', c.glow);
+    dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+  }
+  setInterval(() => { colorIndex = (colorIndex + 1) % colors.length; setColors(colorIndex); }, 2200);
+
+  const check = document.getElementById('robotCheck');
+  const button = document.getElementById('joinBtn');
+  const hint = document.getElementById('hint');
+  check.addEventListener('change', () => {
+    const unlocked = check.checked;
+    button.classList.toggle('locked', !unlocked);
+    button.setAttribute('aria-disabled', String(!unlocked));
+    button.tabIndex = unlocked ? 0 : -1;
+    hint.textContent = unlocked
+      ? 'Button unlocked — tap JOIN CHANNEL to open Telegram.'
+      : 'Tick the box above to unlock JOIN CHANNEL.';
+  });
+  button.addEventListener('click', (event) => {
+    if (!check.checked) {
+      event.preventDefault();
+      hint.textContent = 'Tick the box first to unlock the button.';
+    }
+  });
+</script>
+</body>
+</html>
