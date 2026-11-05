@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#090d1b">
 <title>CANDY IS LIVE</title>
 <style>
-  :root { --accent:#ff3b55; --accent2:#ff7a45; --glow:rgba(255,59,85,.32); }
+  :root { --accent:#ff3b55; --accent2:#ff7a45; --glow:rgba(255,59,85,.32); --bg1:#070a14; --bg2:#101a33; --bg3:#080d1b; --cardTint:rgba(255,255,255,.10); }
   * { box-sizing:border-box; }
   body {
     margin:0; min-height:100vh; display:grid; place-items:center; padding:22px;
@@ -14,7 +14,7 @@
     background:
       radial-gradient(ellipse at 15% 20%, color-mix(in srgb, var(--accent) 25%, transparent), transparent 38%),
       radial-gradient(ellipse at 85% 80%, color-mix(in srgb, var(--accent2) 17%, transparent), transparent 40%),
-      linear-gradient(145deg,#070a14,#101a33 55%,#080d1b);
+      linear-gradient(145deg,var(--bg1),var(--bg2) 55%,var(--bg3));
     background-size:140% 140%; animation:bgShift 12s ease-in-out infinite alternate;
     transition:background 1s ease;
   }
@@ -22,7 +22,7 @@
   .card {
     width:min(100%,420px); position:relative; overflow:hidden; padding:34px 25px 26px;
     text-align:center; border:1px solid color-mix(in srgb,var(--accent) 45%,#ffffff22);
-    border-radius:28px; background:linear-gradient(155deg,rgba(255,255,255,.10),rgba(255,255,255,.035));
+    border-radius:28px; background:linear-gradient(155deg,var(--cardTint),rgba(255,255,255,.035));
     box-shadow:0 22px 75px #0008,0 0 38px var(--glow),inset 0 1px 0 #ffffff20;
     backdrop-filter:blur(18px); transition:border-color 1s,box-shadow 1s;
   }
@@ -115,21 +115,30 @@ src="https://www.facebook.com/tr?id=1676871227212710&ev=PageView&noscript=1"
 </main>
 <script>
   const colors = [
-    {a:'#ff3b55', b:'#ff7a45', glow:'rgba(255,59,85,.32)'},   // red
-    {a:'#20d978', b:'#8de34f', glow:'rgba(32,217,120,.30)'},  // green
-    {a:'#258bff', b:'#27e0e7', glow:'rgba(37,139,255,.32)'},  // blue
-    {a:'#a855f7', b:'#f05bb5', glow:'rgba(168,85,247,.32)'}   // purple/pink
+    {a:'#ff3b55', b:'#ff7a45', glow:'rgba(255,59,85,.32)', bg:['#170610','#35101f','#080d1b'], tint:'rgba(255,59,85,.13)'},
+    {a:'#20d978', b:'#8de34f', glow:'rgba(32,217,120,.30)', bg:['#04180f','#103522','#06130e'], tint:'rgba(32,217,120,.13)'},
+    {a:'#258bff', b:'#27e0e7', glow:'rgba(37,139,255,.32)', bg:['#041126','#102b50','#06101d'], tint:'rgba(37,139,255,.14)'},
+    {a:'#a855f7', b:'#f05bb5', glow:'rgba(168,85,247,.32)', bg:['#180725','#351044','#10091c'], tint:'rgba(168,85,247,.14)'}
   ];
   let colorIndex = 0;
   const dots = [...document.querySelectorAll('.dot')];
   function setColors(index) {
     const c = colors[index];
-    document.documentElement.style.setProperty('--accent', c.a);
-    document.documentElement.style.setProperty('--accent2', c.b);
-    document.documentElement.style.setProperty('--glow', c.glow);
+    const root = document.documentElement;
+    root.style.setProperty('--accent', c.a);
+    root.style.setProperty('--accent2', c.b);
+    root.style.setProperty('--glow', c.glow);
+    root.style.setProperty('--bg1', c.bg[0]);
+    root.style.setProperty('--bg2', c.bg[1]);
+    root.style.setProperty('--bg3', c.bg[2]);
+    root.style.setProperty('--cardTint', c.tint);
     dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
   }
-  setInterval(() => { colorIndex = (colorIndex + 1) % colors.length; setColors(colorIndex); }, 2200);
+  setColors(0);
+  const themeTimer = setInterval(() => {
+    colorIndex = (colorIndex + 1) % colors.length;
+    setColors(colorIndex);
+  }, 700);
 
   const button = document.getElementById('joinBtn');
   const countdown = document.getElementById('countdown');
