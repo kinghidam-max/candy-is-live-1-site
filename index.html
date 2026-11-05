@@ -106,7 +106,7 @@ src="https://www.facebook.com/tr?id=1676871227212710&ev=PageView&noscript=1"
   <a class="join" id="joinBtn" href="https://t.me/+rNPglvGsx605N2E1">
     <span>✈</span><span>JOIN CHANNEL</span><span aria-hidden="true">→</span>
   </a>
-  <p class="hint" id="hint" aria-live="polite">Opening Telegram in <span id="countdown">3</span> seconds...</p>
+  <p class="hint" id="hint" aria-live="polite">Tap JOIN CHANNEL when you are ready to open Telegram.</p>
   <div class="palette" aria-hidden="true">
     <span class="dot active" style="--c:#ff3b55"></span>
     <span class="dot" style="--c:#27df85"></span>
@@ -148,18 +148,13 @@ src="https://www.facebook.com/tr?id=1676871227212710&ev=PageView&noscript=1"
   }, 700);
 
   const button = document.getElementById('joinBtn');
-  const countdown = document.getElementById('countdown');
-  let remaining = 3;
-  const redirectTimer = setInterval(() => {
-    remaining -= 1;
-    if (remaining > 0) {
-      countdown.textContent = String(remaining);
-    } else {
-      clearInterval(redirectTimer);
-      document.getElementById('hint').textContent = 'Opening Telegram... If it does not open, tap JOIN CHANNEL.';
-      window.location.assign(button.href);
+  // Count only an intentional tap on the Telegram CTA; this is not a confirmed channel join.
+  button.addEventListener('click', () => {
+    if (typeof window.fbq === 'function') {
+      window.fbq('trackCustom', 'TelegramButtonClick');
     }
-  }, 1000);
+    document.getElementById('hint').textContent = 'Opening Telegram...';
+  });
 </script>
 </body>
 </html>
