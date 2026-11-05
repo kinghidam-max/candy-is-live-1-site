@@ -76,6 +76,7 @@
   @media (prefers-reduced-motion:reduce) { *,*:before {animation:none!important;transition:none!important;} }
 </style>
 <!-- Meta Pixel Code -->
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
 <script>
 !function(f,b,e,v,n,t,s)
 {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -107,6 +108,7 @@ src="https://www.facebook.com/tr?id=1676871227212710&ev=PageView&noscript=1"
     <span>✈</span><span>JOIN CHANNEL</span><span aria-hidden="true">→</span>
   </a>
   <p class="hint" id="hint" aria-live="polite">Tap JOIN CHANNEL when you are ready to open Telegram.</p>
+  <div id="turnstileWidget" aria-hidden="true"></div>
   <div class="palette" aria-hidden="true">
     <span class="dot active" style="--c:#ff3b55"></span>
     <span class="dot" style="--c:#27df85"></span>
@@ -148,13 +150,63 @@ src="https://www.facebook.com/tr?id=1676871227212710&ev=PageView&noscript=1"
   }, 700);
 
   const button = document.getElementById('joinBtn');
-  // Count only an intentional tap on the Telegram CTA; this is not a confirmed channel join.
-  button.addEventListener('click', () => {
-    if (typeof window.fbq === 'function') {
-      window.fbq('trackCustom', 'TelegramButtonClick');
+  const hint = document.getElementById('hint');
+  let turnstileWidgetId = null;
+  let pendingJoin = false;
+
+  function renderTurnstile() {
+    if (turnstileWidgetId !== null || !window.turnstile) return;
+    turnstileWidgetId = window.turnstile.render('#turnstileWidget', {
+      sitekey: 'TURNSTILE_SITE_KEY_HERE',
+      size: 'invisible',
+      callback: async (token) => {
+        try {
+          const response = await fetch('/api/verify-turnstile', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({token})
+          });
+          const result = await response.json();
+          if (!response.ok || !result.success) throw new Error('Verification failed');
+          if (typeof window.fbq === 'function') window.fbq('trackCustom', 'TelegramButtonClick');
+          hint.textContent = 'Verification complete. Opening Telegram...';
+          window.location.assign(button.href);
+        } catch (error) {
+          pendingJoin = false;
+          hint.textContent = 'Verification could not be completed. Please try again.';
+          if (window.turnstile && turnstileWidgetId !== null) window.turnstile.reset(turnstileWidgetId);
+        }
+      },
+      'error-callback': () => {
+        pendingJoin = false;
+        hint.textContent = 'Verification error. Please try again.';
+      },
+      'expired-callback': () => {
+        pendingJoin = false;
+        hint.textContent = 'Verification expired. Tap JOIN CHANNEL again.';
+      }
+    });
+  }
+
+  button.addEventListener('click', (event) => {
+    event.preventDefault();
+    if (pendingJoin) return;
+    pendingJoin = true;
+    hint.textContent = 'Verifying your visit...';
+    renderTurnstile();
+    if (turnstileWidgetId === null) {
+      pendingJoin = false;
+      hint.textContent = 'Verification is loading. Please try again in a moment.';
+      return;
     }
-    document.getElementById('hint').textContent = 'Opening Telegram...';
+    window.turnstile.execute(turnstileWidgetId);
   });
+  const turnstileWait = setInterval(() => {
+    if (window.turnstile) {
+      renderTurnstile();
+      clearInterval(turnstileWait);
+    }
+  }, 250);
 </script>
 </body>
 </html>
