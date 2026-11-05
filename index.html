@@ -30,12 +30,13 @@
     background:linear-gradient(90deg,transparent,var(--accent),var(--accent2),transparent);filter:drop-shadow(0 0 9px var(--accent));animation:scan 5s linear infinite; }
   @keyframes scan { from{transform:translateX(-35%)} to{transform:translateX(35%)} }
   .logo {
-    width:180px;height:180px;margin:0 auto 20px;border-radius:22px;overflow:hidden;
-    display:block;background:transparent;border:0;box-shadow:0 0 30px var(--glow);
-    transition:box-shadow 1s;
+    width:88px;height:88px;margin:0 auto 18px;border-radius:26px;overflow:hidden;
+    display:grid;place-items:center;
+    background:linear-gradient(140deg,color-mix(in srgb,var(--accent) 75%,#fff),#111b34 78%);
+    border:1px solid color-mix(in srgb,var(--accent) 65%,#fff);box-shadow:0 0 28px var(--glow);
+    transition:background 1s,border-color 1s;
   }
-  .logo img { width:100%;height:100%;object-fit:contain;border-radius:inherit;display:block; }
-  @media (max-width:380px) { .logo { width:150px;height:150px; } }
+  .logo img { width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block; }
   .online { display:inline-block;width:8px;height:8px;border-radius:50%;background:#36e78b;box-shadow:0 0 12px #36e78b;margin-right:7px; }
   .eyebrow { color:var(--mutedText);font-size:11px;letter-spacing:3px;text-transform:uppercase;font-weight:800; }
   h1 { font-size:clamp(27px,7vw,35px);letter-spacing:1.3px;margin:12px 0 8px;font-weight:900; }
