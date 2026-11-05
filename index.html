@@ -101,15 +101,10 @@ src="https://www.facebook.com/tr?id=1676871227212710&ev=PageView&noscript=1"
   <h1 class="titleGlow">CANDY IS LIVE</h1>
   <p class="sub">Join the community on Telegram</p>
 
-  <label class="verify" for="robotCheck">
-    <input id="robotCheck" type="checkbox" aria-label="Unlock Join Channel button">
-    <span><strong>I'm not a robot</strong><small>Tick the box to unlock the channel button</small></span>
-  </label>
-
-  <a class="join locked" id="joinBtn" href="https://t.me/+rNPglvGsx605N2E1" aria-disabled="true" tabindex="-1">
+  <a class="join" id="joinBtn" href="https://t.me/+rNPglvGsx605N2E1">
     <span>✈</span><span>JOIN CHANNEL</span><span aria-hidden="true">→</span>
   </a>
-  <p class="hint" id="hint" aria-live="polite">Tick the box above to unlock JOIN CHANNEL.</p>
+  <p class="hint" id="hint" aria-live="polite">Opening Telegram in <span id="countdown">3</span> seconds...</p>
   <div class="palette" aria-hidden="true">
     <span class="dot active" style="--c:#ff3b55"></span>
     <span class="dot" style="--c:#27df85"></span>
@@ -136,24 +131,19 @@ src="https://www.facebook.com/tr?id=1676871227212710&ev=PageView&noscript=1"
   }
   setInterval(() => { colorIndex = (colorIndex + 1) % colors.length; setColors(colorIndex); }, 2200);
 
-  const check = document.getElementById('robotCheck');
   const button = document.getElementById('joinBtn');
-  const hint = document.getElementById('hint');
-  check.addEventListener('change', () => {
-    const unlocked = check.checked;
-    button.classList.toggle('locked', !unlocked);
-    button.setAttribute('aria-disabled', String(!unlocked));
-    button.tabIndex = unlocked ? 0 : -1;
-    hint.textContent = unlocked
-      ? 'Button unlocked — tap JOIN CHANNEL to open Telegram.'
-      : 'Tick the box above to unlock JOIN CHANNEL.';
-  });
-  button.addEventListener('click', (event) => {
-    if (!check.checked) {
-      event.preventDefault();
-      hint.textContent = 'Tick the box first to unlock the button.';
+  const countdown = document.getElementById('countdown');
+  let remaining = 3;
+  const redirectTimer = setInterval(() => {
+    remaining -= 1;
+    if (remaining > 0) {
+      countdown.textContent = String(remaining);
+    } else {
+      clearInterval(redirectTimer);
+      document.getElementById('hint').textContent = 'Opening Telegram... If it does not open, tap JOIN CHANNEL.';
+      window.location.assign(button.href);
     }
-  });
+  }, 1000);
 </script>
 </body>
 </html>
