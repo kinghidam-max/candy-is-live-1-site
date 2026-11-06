@@ -154,6 +154,7 @@ src="https://www.facebook.com/tr?id=2240993810091914&ev=PageView&noscript=1"
   const hint = document.getElementById('hint');
   let turnstileWidgetId = null;
   let pendingJoin = false;
+  let verificationTimer = null;
 
   function renderTurnstile() {
     if (turnstileWidgetId !== null || !window.turnstile) return;
@@ -161,20 +162,26 @@ src="https://www.facebook.com/tr?id=2240993810091914&ev=PageView&noscript=1"
       sitekey: '0x4AAAAAAF0otZJc57xEenRM',
       size: 'invisible',
       callback: async (token) => {
+        if (verificationTimer) clearTimeout(verificationTimer);
         try {
+          const controller = new AbortController();
+          const requestTimer = setTimeout(() => controller.abort(), 10000);
           const response = await fetch('/api/verify-turnstile', {
             method: 'POST',
             headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({token})
+            body: JSON.stringify({token}),
+            signal: controller.signal
           });
+          clearTimeout(requestTimer);
           const result = await response.json();
           if (!response.ok || !result.success) throw new Error('Verification failed');
           if (typeof window.fbq === 'function') window.fbq('trackCustom', 'TelegramButtonClick');
           hint.textContent = 'Verification complete. Opening Telegram...';
           window.location.assign(button.href);
         } catch (error) {
+          if (verificationTimer) clearTimeout(verificationTimer);
           pendingJoin = false;
-          hint.textContent = 'Verification could not be completed. Please try again.';
+          hint.textContent = 'Security check timed out or failed. Please try again.';
           if (window.turnstile && turnstileWidgetId !== null) window.turnstile.reset(turnstileWidgetId);
         }
       },
@@ -200,6 +207,12 @@ src="https://www.facebook.com/tr?id=2240993810091914&ev=PageView&noscript=1"
       hint.textContent = 'Verification is loading. Please try again in a moment.';
       return;
     }
+    hint.textContent = 'Security check running...';
+    verificationTimer = setTimeout(() => {
+      pendingJoin = false;
+      hint.textContent = 'Security check is taking too long. Please tap JOIN CHANNEL to retry.';
+      if (window.turnstile && turnstileWidgetId !== null) window.turnstile.reset(turnstileWidgetId);
+    }, 15000);
     window.turnstile.execute(turnstileWidgetId);
   });
   const turnstileWait = setInterval(() => {
