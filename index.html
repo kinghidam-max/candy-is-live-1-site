@@ -170,8 +170,10 @@ src="https://www.facebook.com/tr?id=2240993810091914&ev=PageView&noscript=1"
           const result = await response.json();
           if (!response.ok || !result.success) throw new Error('Verification failed');
           if (typeof window.fbq === 'function') window.fbq('trackCustom', 'TelegramButtonClick');
-          hint.textContent = 'Verification complete. Opening Telegram...';
-          window.location.assign(button.href);
+          hint.textContent = 'Verification complete. Tap CONTINUE TO TELEGRAM to open Telegram.';
+          button.dataset.verified = 'true';
+          button.querySelector('span:nth-child(2)').textContent = 'CONTINUE TO TELEGRAM';
+          pendingJoin = false;
         } catch (error) {
           pendingJoin = false;
           hint.textContent = 'Verification could not be completed. Please try again.';
@@ -190,6 +192,7 @@ src="https://www.facebook.com/tr?id=2240993810091914&ev=PageView&noscript=1"
   }
 
   button.addEventListener('click', (event) => {
+    if (button.dataset.verified === 'true') return;
     event.preventDefault();
     if (pendingJoin) return;
     pendingJoin = true;
