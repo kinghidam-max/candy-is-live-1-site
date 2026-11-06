@@ -1,5 +1,5 @@
 async function redis(commands) {
-  const response = await fetch(process.env.UPSTASH_REDIS_REST_URL, {
+  const response = await fetch(`${process.env.UPSTASH_REDIS_REST_URL.replace(/\/+$/, '')}/pipeline`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${process.env.UPSTASH_REDIS_REST_TOKEN}`,
