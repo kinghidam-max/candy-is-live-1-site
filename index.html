@@ -143,6 +143,10 @@ src="https://www.facebook.com/tr?id=2240993810091914&ev=PageView&noscript=1"
     dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
   }
   setColors(0);
+  const themeTimer = setInterval(() => {
+    colorIndex = (colorIndex + 1) % colors.length;
+    setColors(colorIndex);
+  }, 700);
 
   const button = document.getElementById('joinBtn');
   const hint = document.getElementById('hint');
