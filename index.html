@@ -77,7 +77,6 @@
   @media (prefers-reduced-motion:reduce) { *,*:before {animation:none!important;transition:none!important;} }
 </style>
 <!-- Meta Pixel Code -->
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
 <script>
 !function(f,b,e,v,n,t,s)
 {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -109,7 +108,6 @@ src="https://www.facebook.com/tr?id=2240993810091914&ev=PageView&noscript=1"
     <span>✈</span><span>JOIN CHANNEL</span><span aria-hidden="true">→</span>
   </a>
   <p class="hint" id="hint" aria-live="polite">Tap JOIN CHANNEL when you are ready to open Telegram.</p>
-  <div id="turnstileWidget" aria-hidden="true"></div>
   <div class="palette" aria-hidden="true">
     <span class="dot active" style="--c:#ff3b55"></span>
     <span class="dot" style="--c:#27df85"></span>
@@ -151,76 +149,11 @@ src="https://www.facebook.com/tr?id=2240993810091914&ev=PageView&noscript=1"
   }, 3000);
 
   const button = document.getElementById('joinBtn');
-  const hint = document.getElementById('hint');
-  let turnstileWidgetId = null;
-  let pendingJoin = false;
-  let verificationTimer = null;
-
-  function renderTurnstile() {
-    if (turnstileWidgetId !== null || !window.turnstile) return;
-    turnstileWidgetId = window.turnstile.render('#turnstileWidget', {
-      sitekey: '0x4AAAAAAF0otZJc57xEenRM',
-      size: 'invisible',
-      callback: async (token) => {
-        if (verificationTimer) clearTimeout(verificationTimer);
-        try {
-          const controller = new AbortController();
-          const requestTimer = setTimeout(() => controller.abort(), 10000);
-          const response = await fetch('/api/verify-turnstile', {
-            method: 'POST',
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({token}),
-            signal: controller.signal
-          });
-          clearTimeout(requestTimer);
-          const result = await response.json();
-          if (!response.ok || !result.success) throw new Error('Verification failed');
-          if (typeof window.fbq === 'function') window.fbq('trackCustom', 'TelegramButtonClick');
-          hint.textContent = 'Verification complete. Opening Telegram...';
-          window.location.assign(button.href);
-        } catch (error) {
-          if (verificationTimer) clearTimeout(verificationTimer);
-          pendingJoin = false;
-          hint.textContent = 'Security check timed out or failed. Please try again.';
-          if (window.turnstile && turnstileWidgetId !== null) window.turnstile.reset(turnstileWidgetId);
-        }
-      },
-      'error-callback': () => {
-        pendingJoin = false;
-        hint.textContent = 'Verification error. Please try again.';
-      },
-      'expired-callback': () => {
-        pendingJoin = false;
-        hint.textContent = 'Verification expired. Tap JOIN CHANNEL again.';
-      }
-    });
-  }
-
-  button.addEventListener('click', (event) => {
-    event.preventDefault();
-    if (pendingJoin) return;
-    pendingJoin = true;
-    hint.textContent = 'Verifying your visit...';
-    renderTurnstile();
-    if (turnstileWidgetId === null) {
-      pendingJoin = false;
-      hint.textContent = 'Verification is loading. Please try again in a moment.';
-      return;
+  button.addEventListener('click', () => {
+    if (typeof window.fbq === 'function') {
+      window.fbq('trackCustom', 'TelegramButtonClick');
     }
-    hint.textContent = 'Security check running...';
-    verificationTimer = setTimeout(() => {
-      pendingJoin = false;
-      hint.textContent = 'Security check is taking too long. Please tap JOIN CHANNEL to retry.';
-      if (window.turnstile && turnstileWidgetId !== null) window.turnstile.reset(turnstileWidgetId);
-    }, 15000);
-    window.turnstile.execute(turnstileWidgetId);
   });
-  const turnstileWait = setInterval(() => {
-    if (window.turnstile) {
-      renderTurnstile();
-      clearInterval(turnstileWait);
-    }
-  }, 250);
 </script>
 </body>
 </html>
