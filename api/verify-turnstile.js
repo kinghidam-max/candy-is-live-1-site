@@ -19,11 +19,15 @@ export default async function handler(req, res) {
     form.set('secret', secret);
     form.set('response', token);
 
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
     const verification = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: form.toString()
+      body: form.toString(),
+      signal: controller.signal
     });
+    clearTimeout(timeout);
 
     const result = await verification.json();
     if (!result.success) {
