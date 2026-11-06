@@ -126,7 +126,6 @@ src="https://www.facebook.com/tr?id=2240993810091914&ev=PageView&noscript=1"
     {a:'#a855f7', b:'#f05bb5', glow:'rgba(168,85,247,.32)', bg:['#180725','#351044','#10091c'], tint:'rgba(168,85,247,.14)', text:'#fff2ff', muted:'#efcfff', soft:'#d5a9e8'},
     {a:'#ffffff', b:'#dce6f2', glow:'rgba(255,255,255,.35)', bg:['#ffffff','#edf2f7','#dfe7f0'], tint:'rgba(255,255,255,.72)', text:'#172033', muted:'#435168', soft:'#66758b'}
   ];
-  let colorIndex = 0;
   const dots = [...document.querySelectorAll('.dot')];
   function setColors(index) {
     const c = colors[index];
@@ -144,10 +143,6 @@ src="https://www.facebook.com/tr?id=2240993810091914&ev=PageView&noscript=1"
     dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
   }
   setColors(0);
-  const themeTimer = setInterval(() => {
-    colorIndex = (colorIndex + 1) % colors.length;
-    setColors(colorIndex);
-  }, 700);
 
   const button = document.getElementById('joinBtn');
   const hint = document.getElementById('hint');
