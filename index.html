@@ -22,9 +22,9 @@
   .card {
     width:min(100%,420px); position:relative; overflow:hidden; padding:34px 25px 26px;
     text-align:center; border:1px solid color-mix(in srgb,var(--accent) 45%,#ffffff22);
-    border-radius:28px; background:linear-gradient(155deg,var(--cardTint),rgba(255,255,255,.035));
+    border-radius:28px; background:linear-gradient(145deg,color-mix(in srgb,var(--accent) 28%,#111827),color-mix(in srgb,var(--accent2) 22%,#111827) 58%,var(--cardTint));
     box-shadow:0 22px 75px #0008,0 0 38px var(--glow),inset 0 1px 0 #ffffff20;
-    backdrop-filter:blur(18px); transition:border-color 1s,box-shadow 1s;
+    backdrop-filter:blur(18px); transition:background 1s,border-color 1s,box-shadow 1s;
   }
   .card:before { content:"";position:absolute;inset:-2px auto auto -30%;width:160%;height:2px;
     background:linear-gradient(90deg,transparent,var(--accent),var(--accent2),transparent);filter:drop-shadow(0 0 9px var(--accent));animation:scan 5s linear infinite; }
